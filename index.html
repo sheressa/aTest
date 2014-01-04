@@ -1,124 +1,199 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta http-equiv="Content-Language" content="en-us" />
-  <meta http-equiv="imagetoolbar" content="false" />
-  <meta name="MSSmartTagsPreventParsing" content="true" />
-  <title>GitHub Developer</title>
-  <link rel="alternate" type="application/atom+xml" title="API Changes" href="/changes.atom" />
-  <link href="/css/reset.css" rel="stylesheet" type="text/css" />
-  <link href="/css/960.css" rel="stylesheet" type="text/css" />
-  <link href="/css/uv_active4d.css" rel="stylesheet" type="text/css" />
-  <link href="/shared/css/documentation.css" media="screen" rel="stylesheet" type="text/css">
-  <link href="/shared/css/pygments.css" media="screen" rel="stylesheet" type="text/css">
-  <script src="/shared/js/jquery.js" type="text/javascript"></script>
-  <script src="/shared/js/documentation.js" type="text/javascript"></script>
-</head>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
 
-<body class="overview">
-	<div id="header-wrapper">
-  <div id="header">
-    <div>
-      <a class="logo" href="/">GitHub:Developer</a>
-      <ul class="nav">
-        <li><a href="/" class="nav-overview">Overview</a></li>
-        <li><a href="/v3/" class="nav-api">API</a></li>
-        <li><a href="/changes/" class="nav-blog">Blog</a></li>
-        <li><a href="https://github.com/contact">Support</a></li>
-        <li id="search-container">
-          <input type="text" id="searchfield" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /><label class="search-placeholder">Search</label>
-          <div class="cancel-search"></div>
-          <ul id="search-results">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-          </ul>
-        </li>
-      </ul>
+    <title>aTest by DEVELDESK</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>aTest</h1>
+        <h2>GitHub API documentation</h2>
+        <a href="https://github.com/DEVELDESK/developer.github.com" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="developergithubcom" class="anchor" href="#developergithubcom"><span class="octicon octicon-link"></span></a>developer.github.com</h1>
+
+<p>This is a GitHub API resource built with <a href="http://nanoc.stoneship.org/">nanoc</a>.</p>
+
+<p>All submissions are welcome. To submit a change, fork this repo, commit your changes, and send us a <a href="http://help.github.com/send-pull-requests/">pull request</a>.</p>
+
+<h2>
+<a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h2>
+
+<p>Ruby 1.9 is required to build the site.</p>
+
+<p>Get the nanoc gem, plus kramdown for Markdown parsing:</p>
+
+<div class="highlight highlight-sh"><pre><span class="nv">$ </span>bundle install
+</pre></div>
+
+<p>You can see the available commands with nanoc:</p>
+
+<div class="highlight highlight-sh"><pre><span class="nv">$ </span>bundle <span class="nb">exec </span>nanoc -h
+</pre></div>
+
+<p>Nanoc has <a href="http://nanoc.ws/docs/tutorial/">some nice documentation</a> to get you started.  Though if you're mainly concerned with editing or adding content, you won't need to know much about nanoc.</p>
+
+<h2>
+<a name="styleguide" class="anchor" href="#styleguide"><span class="octicon octicon-link"></span></a>Styleguide</h2>
+
+<p>Not sure how to structure the docs?  Here's what the structure of the
+API docs should look like:</p>
+
+<pre><code># API title
+
+* TOC
+{:toc}
+
+## API endpoint title
+
+    [VERB] /path/to/endpoint
+
+### Parameters
+
+Name | Type | Description
+-----|------|--------------
+`name`|`type` | Description.
+
+### Input (request JSON body)
+
+Name | Type | Description
+-----|------|--------------
+`name`|`type` | Description.
+
+### Response
+
+&lt;%= headers 200, :pagination =&gt; default_pagination_rels, 'X-Custom-Header' =&gt; "value" %&gt;
+&lt;%= json :resource_name %&gt;
+</code></pre>
+
+<p><strong>Note</strong>: We're using <a href="http://kramdown.rubyforge.org/syntax.html">Kramdown Markdown extensions</a>, such as definition lists.</p>
+
+<h3>
+<a name="json-responses" class="anchor" href="#json-responses"><span class="octicon octicon-link"></span></a>JSON Responses</h3>
+
+<p>We specify the JSON responses in Ruby so that we don't have to write
+them by hand all over the docs.  You can render the JSON for a resource
+like this:</p>
+
+<div class="highlight highlight-erb"><pre><span class="cp">&lt;%=</span> <span class="n">json</span> <span class="ss">:issue</span> <span class="cp">%&gt;</span><span class="x"></span>
+</pre></div>
+
+<p>This looks up <code>GitHub::Resources::ISSUE</code> in <code>lib/resources.rb</code>.</p>
+
+<p>Some actions return arrays.  You can modify the JSON by passing a block:</p>
+
+<div class="highlight highlight-erb"><pre><span class="cp">&lt;%=</span> <span class="n">json</span><span class="p">(</span><span class="ss">:issue</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="nb">hash</span><span class="o">|</span> <span class="o">[</span><span class="nb">hash</span><span class="o">]</span> <span class="p">}</span> <span class="cp">%&gt;</span><span class="x"></span>
+</pre></div>
+
+<h3>
+<a name="terminal-blocks" class="anchor" href="#terminal-blocks"><span class="octicon octicon-link"></span></a>Terminal blocks</h3>
+
+<p>You can specify terminal blocks with <code>pre.terminal</code> elements.  (It'd be
+nice if Markdown could do this more cleanly.)</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;pre</span> <span class="na">class=</span><span class="s">"terminal"</span><span class="nt">&gt;</span>
+$ curl foobar
+....
+<span class="nt">&lt;/pre&gt;</span>
+</pre></div>
+
+<p>This is not a <code>curl</code> tutorial though. Not every API call needs
+to show how to access it with <code>curl</code>.</p>
+
+<h2>
+<a name="development" class="anchor" href="#development"><span class="octicon octicon-link"></span></a>Development</h2>
+
+<p>Nanoc compiles the site into static files living in <code>./output</code>.  It's
+smart enough not to try to compile unchanged files:</p>
+
+<div class="highlight highlight-sh"><pre><span class="nv">$ </span>bundle <span class="nb">exec </span>nanoc compile
+Loading site data...
+Compiling site...
+   identical  <span class="o">[</span>0.00s<span class="o">]</span>  output/css/960.css
+   identical  <span class="o">[</span>0.00s<span class="o">]</span>  output/css/pygments.css
+   identical  <span class="o">[</span>0.00s<span class="o">]</span>  output/css/reset.css
+   identical  <span class="o">[</span>0.00s<span class="o">]</span>  output/css/styles.css
+   identical  <span class="o">[</span>0.00s<span class="o">]</span>  output/css/uv_active4d.css
+      update  <span class="o">[</span>0.28s<span class="o">]</span>  output/index.html
+      update  <span class="o">[</span>1.31s<span class="o">]</span>  output/v3/gists/comments/index.html
+      update  <span class="o">[</span>1.92s<span class="o">]</span>  output/v3/gists/index.html
+      update  <span class="o">[</span>0.25s<span class="o">]</span>  output/v3/issues/comments/index.html
+      update  <span class="o">[</span>0.99s<span class="o">]</span>  output/v3/issues/labels/index.html
+      update  <span class="o">[</span>0.49s<span class="o">]</span>  output/v3/issues/milestones/index.html
+      update  <span class="o">[</span>0.50s<span class="o">]</span>  output/v3/issues/index.html
+      update  <span class="o">[</span>0.05s<span class="o">]</span>  output/v3/index.html
+
+Site compiled in 5.81s.
+</pre></div>
+
+<p>You can setup whatever you want to view the files. If using the adsf
+gem (as listed in the Gemfile), you can start Webrick:</p>
+
+<div class="highlight highlight-sh"><pre><span class="nv">$ </span>bundle <span class="nb">exec </span>nanoc view
+<span class="nv">$ </span>open http://localhost:3000
+</pre></div>
+
+<p>Compilation times got you down?  Use <code>autocompile</code>!</p>
+
+<div class="highlight highlight-sh"><pre><span class="nv">$ </span>bundle <span class="nb">exec </span>nanoc autocompile
+</pre></div>
+
+<p>This starts a web server too, so there's no need to run <code>nanoc view</code>.
+One thing: remember to add trailing slashes to all nanoc links!</p>
+
+<h2>
+<a name="deploy" class="anchor" href="#deploy"><span class="octicon octicon-link"></span></a>Deploy</h2>
+
+<div class="highlight highlight-sh"><pre><span class="nv">$ </span>bundle <span class="nb">exec </span>rake publish
+</pre></div>
+
+<h2>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>TODO</h2>
+
+<ul>
+<li>Integrate through a simple hurl.it app for live API calls.</li>
+<li><del>Maybe add a nice TOC at the top of each page.</del></li>
+<li>Write a task for verifying JSON Resource examples against the actual
+API.</li>
+</ul>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/DEVELDESK/developer.github.com/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/DEVELDESK/developer.github.com/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/DEVELDESK/developer.github.com"></a> is maintained by <a href="https://github.com/DEVELDESK">DEVELDESK</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
-  </div><!-- #header -->
-</div><!-- #header-wrapper -->
-	
-  <div class="wrapper feature">
-	<h1>Leverage the power of<br>
-GitHub in your app</h1>
-	<p class="intro">Get started with one of our guides, or jump straight into the API documentation.</p>
-	<a href="/v3/" class="button">Browse the documentation</a>
-	<img src="/shared/images/labtocat.png" class="labtocat">
-</div>
 
-<div class="full-width-divider">
-	<ul class="wrapper highlights">
-		<li class="highlight-module">
-			<a href="/guides/"><span class="mega-icon octicon-file-text"></span></a>
-			<h2><a href="/guides/">Get Started</a></h2>
-			<p>New to the GitHub API? With these guides you’ll be up and running in a snap.</p>
-		</li>
-		<li class="highlight-module">
-			<a href="/libraries/"><span class="mega-icon octicon-code"></span></a>
-			<h2><a href="/libraries/">Libraries</a></h2>
-			<p>We’ve got you covered. Use the GitHub API in your favorite language.</p>
-		</li>
-		<li class="highlight-module">
-			<a href="http://github.com/contact"><span class="mega-icon octicon-mail-read"></span></a>
-			<h2><a href="http://github.com/contact">Support</a></h2>
-			<p>Are you stuck? Already tried our <a href="/v3/troubleshooting/">troubleshooting guide</a>? Talk to a supportocat.</p>
-		</li>
-		
-	</ul>
-</div>
-
-		
-		<div id="footer" >
-    <div class="lower_footer">
-      <ul class="footer-cell">
-        <li><a href="http://help.github.com/terms-of-service/">Terms</a></li>
-        <li><a href="http://help.github.com/privacy-policy/">Privacy</a></li>
-        <li><a href="http://help.github.com/security/">Security</a></li>
-        <li><a href="https://github.com/contact">Contact</a></li>				
-      </ul>
-
-      <span class="footer-cell">
-        <a href="https://github.com" class="mega-icon mega-icon-invertocat"></a>
-      </span>
-
-      <ul class="footer-cell">
-        <li><a href="https://status.github.com/">Status</a></li>
-        <li><a href="http://training.github.com/">Training</a></li>
-        <li><a href="http://shop.github.com/">Shop</a></li>
-        <li><a href="https://github.com/blog">Blog</a></li>
-        <li><a href="https://github.com/about">About</a></li>
-      </ul>
-    </div>
-		
-		<div class="wrapper">
-			<p>Design &copy; <span class="js-year">2013</span> GitHub, Inc. All rights reserved. Except where otherwise noted, content on this site is licensed under a <a href="http://creativecommons.org/licenses/by/3.0/us/">Creative Commons CC-BY license</a>.</p>
-		</div>
-
-  </div><!-- /#footer -->
-  <script type="text/javascript">
-    var _gauges = _gauges || [];
-    (function() {
-      var t   = document.createElement('script');
-      t.type  = 'text/javascript';
-      t.async = true;
-      t.id    = 'gauges-tracker';
-      t.setAttribute('data-site-id', '4f2038e0cb25bc1b55000003');
-      t.src = '//secure.gaug.es/track.js';
-      var s = document.getElementsByTagName('script')[0];
-      s.parentNode.insertBefore(t, s);
-    })();
-  </script>
-  <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-3769691-27']);
-      _gaq.push(['_trackPageview']);
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-  </script>
-  <script src="/shared/js/retina.js" type="text/javascript"></script>
-
-</body>
+  
+  </body>
 </html>
